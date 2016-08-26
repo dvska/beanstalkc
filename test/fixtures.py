@@ -10,7 +10,7 @@ def setup(module):
     module._BEANSTALKD_PID = os.spawnlp(
         os.P_NOWAIT,
         beanstalkd,
-        beanstalkd, '-l', '127.0.0.1', '-p', '14711')
+        beanstalkd, '-l', '127.0.0.1', '-p', '11300')
     time.sleep(0.5)  # Give beanstalkd some time to ready.
 
 

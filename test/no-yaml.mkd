@@ -7,12 +7,12 @@ Job priorities are not preserved
 Setup a connection that won't parse YAML:
 
     >>> import beanstalkc
-    >>> beanstalk = beanstalkc.Connection(host='localhost', port=14711,
+    >>> beanstalk = beanstalkc.Connection(host='localhost', port=11300,
     ...                                   parse_yaml=False)
 
 Observe that YAML is not parsed:
 
-    >>> isinstance(beanstalk.stats(), str)
+    >>> not isinstance(beanstalk.stats(), dict)
     True
 
 Note that while Job#release and Job#bury will still work, they won't
@@ -21,13 +21,13 @@ automatically maintain the released/buried Job's priority:
     >>> jid = beanstalk.put('foo', priority=42)
 
     >>> job = beanstalk.reserve()
-    >>> print repr(job.stats())                     # doctest: +ELLIPSIS
+    >>> print(repr(job.stats()))                    # doctest: +ELLIPSIS
     '...pri: 42...'
 
     >>> job.release()               # Succeeds, but ...
 
     >>> job = beanstalk.reserve()   # ... may not do what you want.
-    >>> print repr(job.stats())                     # doctest: +ELLIPSIS
+    >>> print(repr(job.stats()))                    # doctest: +ELLIPSIS
     '...pri: 2147483648...'
 
     >>> job.delete()
@@ -37,12 +37,12 @@ Same for Job#bury:
     >>> jid = beanstalk.put('bar', priority=42)
 
     >>> job = beanstalk.reserve()
-    >>> print repr(job.stats())                     # doctest: +ELLIPSIS
+    >>> print(repr(job.stats()))                    # doctest: +ELLIPSIS
     '...pri: 42...'
 
     >>> job.bury()
 
-    >>> print repr(beanstalk.stats_job(jid))        # doctest: +ELLIPSIS
+    >>> print(repr(beanstalk.stats_job(jid)))       # doctest: +ELLIPSIS
     '...pri: 2147483648...'
 
 And that was that.
