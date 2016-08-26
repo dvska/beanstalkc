@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+
 from setuptools import setup
 
 from beanstalkc import __version__ as src_version
@@ -19,7 +20,7 @@ beanstalkc is a simple beanstalkd client library for Python. `beanstalkd
 <http://kr.github.com/beanstalkd/>`_ is a fast, distributed, in-memory
 workqueue service.
 ''',
-    url='http://github.com/earl/beanstalkc',
+    url='http://github.com/dvska/beanstalkc',
     license='Apache License, Version 2.0',
     classifiers=[
         'Development Status :: 4 - Beta',

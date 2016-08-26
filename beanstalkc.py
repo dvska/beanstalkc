@@ -17,11 +17,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 '''
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 import logging
 import socket
-
 
 DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 11300
@@ -30,16 +29,23 @@ DEFAULT_TTR = 120
 
 
 class BeanstalkcException(Exception): pass
+
+
 class UnexpectedResponse(BeanstalkcException): pass
+
+
 class CommandFailed(BeanstalkcException): pass
+
+
 class DeadlineSoon(BeanstalkcException): pass
+
 
 class SocketError(BeanstalkcException):
     @staticmethod
     def wrap(wrapped_function, *args, **kwargs):
         try:
             return wrapped_function(*args, **kwargs)
-        except socket.error, err:
+        except socket.error as err:
             raise SocketError(err)
 
 
@@ -128,7 +134,8 @@ class Connection(object):
     def _interact_peek(self, command):
         try:
             return self._interact_job(command, ['FOUND'], ['NOT_FOUND'], False)
-        except CommandFailed, (_, _status, _results):
+        except CommandFailed as e:
+            (_, _status, _results) = e.args
             return None
 
     # -- public interface --
@@ -137,7 +144,7 @@ class Connection(object):
         """Put a job into the current tube. Returns job id."""
         assert isinstance(body, str), 'Job body must be a str instance'
         jid = self._interact_value('put %d %d %d %d\r\n%s\r\n' % (
-                                       priority, delay, ttr, len(body), body),
+            priority, delay, ttr, len(body), body),
                                    ['INSERTED'],
                                    ['JOB_TOO_BIG', 'BURIED', 'DRAINING'])
         return int(jid)
@@ -153,7 +160,8 @@ class Connection(object):
             return self._interact_job(command,
                                       ['RESERVED'],
                                       ['DEADLINE_SOON', 'TIMED_OUT'])
-        except CommandFailed, (_, status, results):
+        except CommandFailed as e1:
+            (_, status, results) = e1.args
             if status == 'TIMED_OUT':
                 return None
             elif status == 'DEADLINE_SOON':
@@ -307,4 +315,5 @@ class Job(object):
 
 if __name__ == '__main__':
     import nose
+
     nose.main(argv=['nosetests', '-c', '.nose.cfg'])
